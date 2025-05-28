@@ -216,10 +216,10 @@ class ClickCapture:
 
 def main():
     # --------- User Input (Edit Here) ---------
-    folder_path = './TBR5/PET WB EARL2.0_7mm_00003146'
-    output_folder_prefix = 'PET_NOF_A07_T5'
-    output_excel_name = f"{output_folder_prefix}/PET_NOF_A07_T5_targets.xlsx"
-    output_midpoints_name = f"{output_folder_prefix}/outputMidPoints3D.xlsx"
+    folder_path = './FolderPath'
+    output_folder_prefix = 'FolderPrefix'
+    output_excel_name = f"{output_folder_prefix}/ExcelName.xlsx"
+    output_midpoints_name = f"{output_folder_prefix}/outputMidPoints.xlsx"
     output_meta_name = f"{output_folder_prefix}/outputMetaTargets.xlsx"
     output_images_dir = f"{output_folder_prefix}/output_images"
     Path(output_folder_prefix).mkdir(parents=True, exist_ok=True)
