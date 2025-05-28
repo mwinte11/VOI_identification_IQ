@@ -203,4 +203,9 @@ def main():
     print(f"Results saved to {excel_path}")
 
 if __name__ == "__main__":
-    main()
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("dicom_folder", nargs="?", default="path/to/default/folder", help="Path to DICOM folder")
+    args = parser.parse_args()
+    dicom_folder = args.dicom_folder
+    # ...rest of your code...
