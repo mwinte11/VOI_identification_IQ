@@ -11,7 +11,7 @@ from PIL import Image, ImageTk
 from openpyxl import load_workbook
 
 def read_dicom_images(folder_path):
-    """Lees alle DICOM-bestanden in een folder in en retourneer gesorteerde beelden en metadata."""
+    """Reads every DICOM image in a folder and returns structured images and metadata."""
     files = sorted(os.listdir(folder_path))
     images, meta = [], []
     slice_locations = []
@@ -27,7 +27,7 @@ def read_dicom_images(folder_path):
     return images, meta
 
 def create_circular_mask(image, center_y, center_x, radius):
-    """Creëert een masker voor een cirkel en retourneert de pixelwaarden in deze cirkel."""
+    """Creates a mask for a circle and returns the pixel values of this circle."""
     Y, X = np.ogrid[:image.shape[0], :image.shape[1]]
     dist = np.sqrt((X - center_x) ** 2 + (Y - center_y) ** 2)
     mask = dist <= radius
@@ -36,7 +36,7 @@ def create_circular_mask(image, center_y, center_x, radius):
     return circular_region, pixels
 
 class ClickCapture:
-    """Class voor het aanklikken van het middelpunt in een slice met een GUI."""
+    """Class to click the midpoint of a slice with a GUI."""
     def __init__(self, images, initial_slice):
         self.images = images
         self.current_slice = initial_slice
@@ -48,7 +48,7 @@ class ClickCapture:
 
     def _build_gui(self):
         self.root = tk.Tk()
-        self.root.title("Selecteer het midden van een bol met een klik, scroll voor andere slices.")
+        self.root.title("Select the midpoint of your background sphere, scroll for next slices.")
         self.label = tk.Label(self.root)
         self.label.pack(side=tk.LEFT)
         self.slice_label = tk.Label(self.root, text=f"Slice: {self.current_slice + 1}/{self.slice_count}")
@@ -63,7 +63,7 @@ class ClickCapture:
         img = Image.fromarray(norm_img, mode='L')
         tk_img = ImageTk.PhotoImage(img)
         self.label.config(image=tk_img)
-        self.label.image = tk_img  # nodig om garbage collection te voorkomen
+        self.label.image = tk_img  
         self.slice_label.config(text=f"Slice: {self.current_slice + 1}/{self.slice_count}")
 
     def _on_mousewheel(self, event):
@@ -75,29 +75,26 @@ class ClickCapture:
 
     def _on_click(self, event):
         self.coordinates.append((event.x, event.y, self.current_slice))
-        print(f"Geklikt op: ({event.x}, {event.y}, slice {self.current_slice})")
+        print(f"Clicked on: ({event.x}, {event.y}, slice {self.current_slice})")
         self.root.quit()
 
     def get_coordinates(self):
         self.root.mainloop()
         return self.coordinates
 
-def calculate_circle_pixels(image, center_x, center_y, diameter, pixel_spacing, is_cylinder, total_slices, slice_idx, slice_thickness):
-    """Berekent de pixels binnen een cirkel/cilinder op een slice."""
+def calculate_circle_pixels(image, center_x, center_y, diameter, pixel_spacing, total_slices, slice_idx, slice_thickness):
+    """Calculates the pixels within a circle on a slice."""
     radius = diameter / 2
-    if is_cylinder:
-        pixel_radius = radius / pixel_spacing
-    else:
-        z_dist = (total_slices / 2 - slice_idx) * slice_thickness
-        pixel_radius = math.sqrt(radius ** 2 - z_dist ** 2) / pixel_spacing if radius ** 2 > z_dist ** 2 else 0
+    z_dist = (total_slices / 2 - slice_idx) * slice_thickness
+    pixel_radius = math.sqrt(radius ** 2 - z_dist ** 2) / pixel_spacing if radius ** 2 > z_dist ** 2 else 0
     circle_patch = Circle((center_y, center_x), pixel_radius, fill=False, edgecolor='red', linewidth=1)
     circular_region, pixels = create_circular_mask(image, center_y, center_x, pixel_radius)
     return circle_patch, pd.DataFrame(circular_region), pixels, pixel_radius
 
 def main():
-    # Instellingen
-    folder_path = './TBR5/PET WB EARL2.0_7mm_ONCO_00003233'
-    OF, Ampl, TBR = 'OF', 'A07', 'T5'
+    # User settings
+    folder_path = 'FolderPath'
+    OF, Ampl, TBR = 'OF', 'A10', 'T5'
     pixel_spacing, slice_thickness = 1.65, 2
     diams = [37, 37, 28, 22, 17, 13, 10]
     output_dir = f'PET_{OF}_{Ampl}_{TBR}/BG_output_images'
@@ -142,7 +139,7 @@ def main():
         'Nr Pixels': np.size(pd_B0)
     }]
 
-    # Opslaan in Excel
+    # Save to Excel
     with pd.ExcelWriter(filepath + 'outputMetaBackground.xlsx', engine='openpyxl') as writer:
         pd.DataFrame(pd_mean_max).to_excel(writer, sheet_name='Meta data per slice')
         pd.DataFrame(mean_max_sphere).to_excel(writer, sheet_name='Meta data per sphere')
