@@ -73,6 +73,3 @@ pip install numpy pandas pydicom matplotlib pillow openpyxl
 
 See repository license.
 
----
-
-Let me know if you’d like this tailored to a larger project README or want an even more usage-focused quickstart!
