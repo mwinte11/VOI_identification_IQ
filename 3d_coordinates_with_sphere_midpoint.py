@@ -293,8 +293,10 @@ def main():
                     'Sphere': isphere
                 })
                 # Save masked region to Excel
+                excel_exists = os.path.exists(output_excel_name)
+                mode = 'a' if excel_exists else 'w'
                 df_circular_region = df_circular_region.dropna(how='all').dropna(how='all', axis=1)
-                with pd.ExcelWriter(output_excel_name, engine='openpyxl', mode='a') as writer:
+                with pd.ExcelWriter(output_excel_name, engine='openpyxl', mode=mode) as writer:
                     df_circular_region.to_excel(writer, sheet_name=f'Slice{slice_nr}_B0{isphere + 1}')
 
         if circles_added:
