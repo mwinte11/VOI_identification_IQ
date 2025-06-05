@@ -44,7 +44,7 @@ This toolkit provides two complementary Python scripts for analyzing PET-CT phan
 
 ## Dependencies
 
-Both scripts require Python 3.x and the following packages:
+Both scripts require Python 3.7 and the following packages:
 - numpy
 - pandas
 - pydicom
